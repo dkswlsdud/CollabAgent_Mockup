@@ -1,0 +1,108 @@
+<template id="new-schedule-button">
+  <button class="primary" onclick="openScheduleForm()">＋ 내 일정 추가</button>
+</template>
+
+<template id="my-calendar-popup">
+  <div class="my-calendar-toolbar">
+    <div class="month-controls"><button id="my-calendar-prev" class="secondary" type="button" aria-label="이전 달">‹</button><input id="my-calendar-month" type="month" value="{{month}}" aria-label="내 일정 표시 월"><button id="my-calendar-next" class="secondary" type="button" aria-label="다음 달">›</button><button id="my-calendar-today" class="secondary" type="button">이번 달</button></div>
+    <span id="my-calendar-count" class="hint">일정을 불러오는 중입니다…</span>
+  </div>
+  <div class="calendar-legend"><span><i class="legend-work"></i>업무</span><span><i class="legend-meeting"></i>회의</span><span><i class="legend-personal"></i>개인 일정</span></div>
+  <div id="my-calendar-grid">일정을 불러오는 중입니다…</div>
+</template>
+
+<template id="calendar-team-option">
+  <option value="{{value}}" {{selectedAttribute}}>{{label}}</option>
+</template>
+
+<template id="calendar-employee-filter">
+  <label for="calendar-department-select">팀 선택</label>
+  <select id="calendar-department-select">{{departmentOptions}}</select>
+  <label for="calendar-employee-select">직원 선택</label>
+  <select id="calendar-employee-select">
+    <option value="">부서 전체 직원</option>
+    {{options}}
+  </select>
+</template>
+
+<template id="calendar-scope">
+  <span class="scope-pill">{{label}}</span>
+</template>
+
+<template id="calendar-day">
+  <div class="month-cell {{outsideClass}} {{sundayClass}}" style="grid-column: {{column}}; grid-row: 1 / -1">
+    <div class="day-number {{todayClass}}">{{day}}</div>
+  </div>
+</template>
+
+<template id="calendar-week">
+  <div class="calendar-week" style="--event-lanes: {{lanes}}">{{days}}{{events}}</div>
+</template>
+
+<template id="calendar-event">
+  <button class="month-event {{typeClass}} {{continuationClass}} {{unreadClass}}" style="grid-column: {{startColumn}} / {{endColumn}}; grid-row: {{row}}" data-schedule-id="{{scheduleId}}" title="{{tooltip}}">
+    <span class="event-time">{{time}}</span>
+    <span class="event-name">{{title}}</span>
+    <small>{{employeeName}}</small>
+  </button>
+</template>
+
+<template id="calendar-grid">
+  <div class="weekdays">{{weekdays}}</div>
+  <div class="month-grid">{{cells}}</div>
+  {{emptyMessage}}
+</template>
+
+<template id="calendar-weekday">
+  <span>{{label}}</span>
+</template>
+
+<template id="empty-calendar">
+  <div class="calendar-empty">
+    이번 달에 등록된 일정이 없습니다. 월을 이동하거나 내 일정을 추가해보세요.
+  </div>
+</template>
+
+<template id="calendar-error">
+  <p class="form-error">{{message}}</p>
+  <button class="secondary" onclick="renderCalendar()">다시 불러오기</button>
+</template>
+
+<template id="schedule-type-option">
+  <option value="{{value}}">{{label}}</option>
+</template>
+
+<template id="calendar-toolbar">
+  <div class="calendar-toolbar">
+    <div class="month-controls">
+      <button class="secondary" onclick="shiftMonth(-1)" aria-label="이전 달">‹</button>
+      <label class="month-picker">
+        {{year}}년 {{monthNumber}}월
+        <input
+          type="month"
+          value="{{month}}"
+          aria-label="표시 월 선택"
+          onchange="setMonth(this.value)"
+        />
+      </label>
+      <button class="secondary" onclick="shiftMonth(1)" aria-label="다음 달">›</button>
+      <button class="secondary" onclick="todayMonth()">이번 달</button>
+    </div>
+    <div class="team-filter">{{teamFilter}}</div>
+  </div>
+  <div class="calendar-legend">
+    <span>
+      <i class="legend-work"></i>
+      업무
+    </span>
+    <span>
+      <i class="legend-meeting"></i>
+      회의
+    </span>
+    <span>
+      <i class="legend-personal"></i>
+      개인 일정
+    </span>
+    <small id="schedule-total"></small>
+  </div>
+</template>

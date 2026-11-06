@@ -1,0 +1,151 @@
+<template id="new-request-button">
+  <button class="primary" onclick="openNew()">＋ 새 협업 요청</button>
+</template>
+
+<template id="inbox-statistic">
+  <div class="stat {{className}}">
+    <label>{{label}}</label>
+    <span class="stat-icon">{{icon}}</span>
+    <strong>
+      {{count}}
+      <small>건</small>
+    </strong>
+  </div>
+</template>
+
+<template id="inbox-tab">
+  <button class="tab {{activeClass}}" onclick="setFilter('{{value}}')">{{label}}</button>
+</template>
+
+<template id="request-card">
+  <article
+    class="request-card {{newClass}}"
+    role="button"
+    tabindex="0"
+    onclick="openDetail({{requestId}})"
+    onkeydown="if(event.key==='Enter')openDetail({{keyboardRequestId}})"
+  >
+    <div class="card-top">
+      <div class="request-card-badges">{{statusTag}} {{newBadge}} {{rejectionNotice}}</div>
+      <span class="request-id">REQ-{{formattedId}} · {{direction}}</span>
+    </div>
+    <div class="request-title">{{title}}</div>
+    <p class="request-desc">{{description}}</p>
+    <div class="person-line">
+      <div class="avatar purple">{{requesterInitial}}</div>
+      <span>{{requesterName}}</span>
+      <span class="arrow">→</span>
+      <div class="avatar blue">{{assigneeInitial}}</div>
+      <span>{{assigneeName}} · {{assigneeDepartment}}</span>
+      <span class="deadline">◷ {{dueDate}} 마감</span>
+    </div>
+    {{negotiationNote}}
+  </article>
+</template>
+
+<template id="request-negotiation-note">
+  <div class="ai-note">✧ 양측이 받아들일 수 있는 대안을 함께 선택해주세요.</div>
+</template>
+
+<template id="empty-inbox">
+  <div class="empty">아직 요청이 없어요. 동료에게 첫 협업을 요청해보세요.</div>
+</template>
+
+<template id="consent-card">
+  <div class="consent-entry {{newClass}}">
+    <strong>{{title}}</strong> {{newBadge}}
+    <p class="hint">{{description}}</p>
+    {{actions}}
+  </div>
+</template>
+
+<template id="consent-actions">
+  <button class="secondary" onclick="answerConsent('{{consentId}}','APPROVED')">동의</button>
+  <button class="secondary" onclick="answerConsent('{{rejectConsentId}}','REJECTED')">거부</button>
+</template>
+
+<template id="consent-status">
+  <span class="hint">{{label}}</span>
+</template>
+
+<template id="empty-consents">
+  <p class="hint">확인이 필요한 동의 요청이 없습니다.</p>
+</template>
+
+<template id="inbox-sidebar">
+  <aside class="right-column">
+    <section class="panel guide">
+      <div class="eyebrow">MY WORKSPACE</div>
+      <h3>{{department}} · {{employeeName}}</h3>
+      <p>
+        내 팀과 나의 일정을 먼저 살펴보세요.
+        <br />
+        이번 달 업무를 한눈에 확인할 수 있어요.
+      </p>
+      <button onclick="navigate('calendar', 'my')">내 월별 일정 보기 ↗</button>
+    </section>
+    <section class="panel">
+      <div class="mini-heading">
+        <h2>관계자 동의 요청</h2>
+        <span>{{pendingConsentCount}}건 대기</span>
+      </div>
+      {{consentCards}}
+    </section>
+    <section class="panel guide">
+      <div class="eyebrow">A LITTLE GUIDE</div>
+      <h3>
+        조건은 명확하게,
+        <br />
+        조율은 유연하게.
+      </h3>
+      <p>
+        Hard는 반드시 지켜야 할 조건,
+        <br />
+        Soft는 조정 가능한 조건이에요.
+        <br />
+        요청 분석 후 조건을 확인해주세요.
+        <br />
+        일정·대안은 빈 시간과 조건을 검증합니다.
+      </p>
+    </section>
+    <p class="hint" style="padding: 0 8px">
+      ● MySQL 연결 · 로그인한 계정 기준
+      <br />
+      이 화면의 데이터는 DB에 저장됩니다.
+    </p>
+  </aside>
+</template>
+
+<template id="consents-page">
+  <div class="content">{{heading}}
+    <section class="panel consent-page"><div class="mini-heading"><h2>나에게 온 동의 요청</h2><span>{{pending}}건 대기</span></div>{{cards}}</section>
+  </div>
+</template>
+
+<template id="consent-full-card">
+  <details class="consent-full-card {{newClass}}" ontoggle="loadConsentDetail('{{consentId}}',this)">
+    <summary><span><strong>{{title}}</strong>{{newBadge}}<small>{{status}}</small></span><span class="consent-open-label">협업 상세 보기</span></summary>
+    <div class="consent-detail-body" id="consent-detail-{{consentId}}"></div>
+  </details>
+</template>
+
+<template id="consent-detail">
+  <section class="consent-detail-section">
+    <h3>협업 요청 내용</h3><p class="consent-message">{{message}}</p>{{attachments}}
+    <dl class="consent-request-meta"><div><dt>요청자</dt><dd>{{requester}}</dd></div><div><dt>수행자</dt><dd>{{assignee}}</dd></div><div><dt>요청 마감</dt><dd>{{due}}</dd></div></dl>
+    <h4>요청 조건</h4>{{conditions}}
+  </section>
+  <section class="consent-detail-section"><h3>양측 조율 내용</h3><p><b>수행자 의견</b></p><p class="consent-message">{{comment}}</p><p class="hint">유지 가능한 조건: {{maintained}}</p>{{feedback}}<p class="hint">{{requester}} 최종 확인: {{requesterConfirmed}}<br>{{assignee}} 최종 확인: {{assigneeConfirmed}}</p></section>
+  <section class="consent-impact"><h3>내 동의가 필요한 내용</h3>{{impact}}</section>
+  <section class="consent-detail-section"><h3>양측이 최종 확인한 대안</h3><h4>{{alternativeTitle}}</h4><p class="consent-message">{{description}}</p><dl class="consent-request-meta"><div><dt>합의 마감</dt><dd>{{agreedDue}}</dd></div><div><dt>총수량</dt><dd>{{total}}</dd></div><div><dt>규격</dt><dd>{{specification}}</dd></div></dl><h4>합의 조건</h4>{{agreedConditions}}<h4>전체 작업 일정</h4>{{work}}{{changes}}</section>
+  {{refusalNote}}<div class="consent-detail-actions">{{actions}}</div>
+</template>
+
+<template id="consent-reject-dialog">
+  <form id="request-response-form">
+    <p class="hint">거부 사유는 요청자와 수행자에게 전달됩니다. 업무량 문제인지, 특정 시간이나 일정 변경이 어려운지 구체적으로 알려주세요.</p>
+    <div class="field"><label for="response-comment">동의 거부 사유</label><textarea id="response-comment" rows="5" maxlength="2000" placeholder="예: 현재 업무량이 많아 이번 요청은 분담하기 어렵습니다. 또는 11월 6일 오전만 가능하며 오후 작업은 어렵습니다." required></textarea></div>
+    <p id="response-error" class="form-error" role="alert"></p>
+    <div class="screen-actions"><button id="response-cancel" class="secondary" type="button">취소</button><button id="response-submit" class="primary" type="submit">거부 사유 전달</button></div>
+  </form>
+</template>

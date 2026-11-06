@@ -1,0 +1,40 @@
+services:
+  web:
+    build: .
+    depends_on:
+      - api
+    ports:
+      - '127.0.0.1:8080:80'
+    volumes:
+      - type: bind
+        source: ./static
+        target: /usr/share/nginx/html/static
+        read_only: true
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '--spider', 'http://127.0.0.1/']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+  api:
+    build: ./backend
+    env_file:
+      - .env
+    volumes:
+      - ./backend:/app:ro
+    command:
+      [
+        'gunicorn',
+        '--bind',
+        '0.0.0.0:8000',
+        '--workers',
+        '2',
+        '--timeout',
+        '150',
+        '--reload',
+        '--access-logfile',
+        '-',
+        'server:app',
+      ]
+    restart: unless-stopped

@@ -1,0 +1,26 @@
+<!-- page-heading -->
+<template id="page-heading">
+  <div class="page-heading">
+    <div>
+      <div class="eyebrow">{{kicker}}</div>
+      <h1>{{title}}</h1>
+      <p class="subtitle">{{subtitle}}</p>
+    </div>
+    {{button}}
+  </div>
+</template>
+
+<!-- status-tag -->
+<template id="status-tag">
+  <span class="tag {{className}}">{{label}}</span>
+</template>
+
+<template id="screen-error">
+  <div class="content">
+    <section class="panel screen-panel">
+      <h1>화면을 불러올 수 없습니다</h1>
+      <p class="form-error">{{message}}</p>
+      <button class="secondary" onclick="navigate('inbox')">요청 목록으로</button>
+    </section>
+  </div>
+</template>

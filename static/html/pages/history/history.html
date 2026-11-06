@@ -1,0 +1,36 @@
+<!-- history-page -->
+<template id="history-page">
+  <div class="content">
+    {{heading}}
+    <section class="panel">
+      <div class="panel-header">
+        <h2>처리 기록</h2>
+        <span class="hint">{{count}}건</span>
+      </div>
+      {{cards}}
+    </section>
+  </div>
+</template>
+
+<!-- history-card -->
+<template id="history-card">
+  <article
+    class="request-card"
+    role="button"
+    tabindex="0"
+    onclick="openDetail({{requestId}})"
+    onkeydown="if(event.key==='Enter')openDetail({{keyboardRequestId}})"
+  >
+    <div class="card-top">
+      {{statusTag}}
+      <span class="request-id">{{updatedAt}}</span>
+    </div>
+    <h3>{{title}}</h3>
+    <p class="hint">{{requesterName}} → {{assigneeName}}</p>
+  </article>
+</template>
+
+<!-- empty-history -->
+<template id="empty-history">
+  <div class="empty">아직 완료된 요청이 없습니다.</div>
+</template>

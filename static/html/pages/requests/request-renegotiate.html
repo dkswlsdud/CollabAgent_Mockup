@@ -1,0 +1,29 @@
+<template id="request-renegotiate-page">
+  <div class="content screen-page">
+    <div class="page-heading">
+      <div>
+        <div class="eyebrow">COLLAB AGENT</div>
+        <h1>재조정 의견</h1>
+        <p class="subtitle">다음 협상 회차에서 검토할 의견을 남겨주세요.</p>
+      </div>
+      <button class="secondary" onclick="openDetail({{requestId}})">목록으로</button>
+    </div>
+    <section class="panel screen-panel">
+      <div class="screen-body">
+        <div class="field">
+          <label for="feedback">다음 회차에서 검토할 의견</label>
+          <textarea
+            id="feedback"
+            rows="4"
+            placeholder="예: 마감을 유지하되 작업 가능한 시간대를 다시 논의해주세요."
+          ></textarea>
+        </div>
+        <p class="hint">이전 회차를 보존하고 대안을 다시 검토할 새 협상 회차를 생성합니다.</p>
+      </div>
+      <div class="screen-actions">
+        <button class="secondary" onclick="openDetail({{requestId}})">취소</button>
+        <button class="primary" onclick="submitFeedback()">새 회차 시작</button>
+      </div>
+    </section>
+  </div>
+</template>

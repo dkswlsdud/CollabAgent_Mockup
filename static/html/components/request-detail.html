@@ -1,0 +1,243 @@
+<template id="request-summary">
+  <div class="card-top">
+    {{statusTag}}
+    <span class="request-id">REQ-{{requestId}} · {{roundLabel}}</span>
+  </div>
+  <h2>{{title}}</h2>
+  <p class="subtitle request-message" style="margin-top: 12px">{{originalText}}</p>
+  <div class="detail-summary">
+    <span>
+      요청자
+      <b>{{requesterName}}</b>
+    </span>
+    <span>
+      수행자
+      <b>{{assigneeName}}</b>
+    </span>
+    <span>
+      마감
+      <b>{{dueAt}}</b>
+    </span>
+  </div>
+  {{conditions}}
+</template>
+
+<template id="request-condition">
+  <button type="button" class="condition-chip {{constraintClass}}" popovertarget="{{popoverId}}" aria-label="{{label}} {{constraint}} 상세 보기">
+    {{label}} <b>{{constraint}}</b>
+  </button>
+  <div id="{{popoverId}}" class="condition-popover {{constraintClass}}" popover>
+    <div class="condition-popover-heading"><strong>{{label}} <span>{{constraint}}</span></strong><button type="button" popovertarget="{{popoverId}}" popovertargetaction="hide" aria-label="조건 상세 닫기">×</button></div>
+    <p>{{value}}</p>
+  </div>
+</template>
+
+<template id="request-analysis">
+  <section class="request-schedule" aria-label="수행자 일정">
+    <div class="request-schedule-heading"><div class="request-schedule-title"><h3>{{assigneeName}}님의 일정</h3><button class="secondary" type="button" onclick="openMyCalendarDialog()">내 일정</button></div><span>{{count}}건</span></div>
+    <div class="request-schedule-range"><span><small>오늘</small><b>{{periodStart}}</b></span><i aria-hidden="true">→</i><span><small>요청 마감</small><b>{{periodEnd}}</b></span></div>
+    {{schedules}}
+  </section>
+</template>
+
+<template id="request-conflict">
+  <div class="conflict">
+    <span>{{title}}</span>
+    <small>{{date}}</small>
+  </div>
+</template>
+
+<template id="response-form">
+  <div class="section-title">수행자 응답</div>
+  <div class="response-buttons">
+    <button class="secondary response-choice {{acceptClass}}" onclick="respond('ACCEPT')">수락 {{acceptBadge}}</button>
+    <button class="secondary response-choice {{conditionalClass}}" onclick="respond('CONDITIONAL_ACCEPT')">조건부 수락 {{conditionalBadge}}</button>
+    <button class="secondary response-choice {{rejectClass}}" onclick="respond('REJECT')">거절 {{rejectBadge}}</button>
+  </div>
+</template>
+
+<template id="response-conditional-dialog">
+  <form id="request-response-form">
+    <p class="hint">요청자가 지정한 HARD·SOFT 구분을 확인하고, 유지할 수 있는 조건을 선택해주세요.</p>
+    <div class="field"><fieldset><legend>유지할 수 있는 조건 · 복수 선택 가능</legend>{{conditionOptions}}</fieldset></div>
+    <div class="field"><label for="response-comment">기타 의견</label><textarea id="response-comment" rows="3" maxlength="2000" placeholder="예: 수량을 3개로 조정하면 진행할 수 있습니다."></textarea></div>
+    <p class="hint">유지 가능한 조건을 선택하거나 기타 의견을 작성해주세요.</p>
+    <p id="response-error" class="form-error" role="alert"></p>
+    <div class="screen-actions"><button id="response-cancel" class="secondary" type="button">취소</button><button id="response-submit" class="primary" type="submit">조건부 수락 제출</button></div>
+  </form>
+</template>
+
+<template id="response-generate-dialog">
+  <form id="request-response-form">
+    <p class="feedback-guidance">시연 대안을 바로 생성하시겠습니까?</p>
+    <p class="hint">수락하신 조건과 현재 일정을 바탕으로 대안 3가지를 제안합니다. 아니요를 누르면 나중에 대안 생성 버튼으로 생성할 수 있습니다.</p>
+    <p id="response-error" class="form-error" role="alert"></p>
+    <div class="screen-actions"><button id="response-cancel" class="secondary" type="button">아니요</button><button id="response-submit" class="primary" type="submit">예, 바로 생성</button></div>
+  </form>
+</template>
+
+<template id="response-feedback-dialog">
+  <form id="request-response-form">
+    <p class="feedback-guidance">원하시는 대안이 없다면, 여기 작성해주세요.</p>
+    <p class="hint">변경하고 싶은 마감·수량·작업 방식과 유지할 조건을 알려주세요. 의견을 제출하면 현재 대안은 이전 회차에 보관되고, 새 회차에서 시연 대안을 생성할 수 있습니다.</p>
+    <div class="field"><label for="response-comment">재조정 의견</label><textarea id="response-comment" rows="5" maxlength="2000" placeholder="예: 수량은 유지하고 마감을 11월 10일로 연장해주세요. 업무 분담 없이 진행하고 싶습니다." required></textarea></div>
+    <p id="response-error" class="form-error" role="alert"></p>
+    <div class="screen-actions"><button id="response-cancel" class="secondary" type="button">취소</button><button id="response-submit" class="primary" type="submit">의견 제출</button></div>
+  </form>
+</template>
+
+<template id="no-common-dialog">
+  <form id="request-response-form" class="no-common-dialog">
+    <div class="no-common-icon" aria-hidden="true">↔</div>
+    <p class="no-common-summary">양측이 선택을 완료했지만<br />공통으로 선택한 대안이 없습니다.</p>
+    <p class="no-common-description">재조정 의견을 남겨주세요.<br />의견을 반영해 새 대안을 생성합니다.</p>
+    <p id="response-error" class="form-error" role="alert"></p>
+    <div class="screen-actions"><button id="response-cancel" class="secondary" type="button">나중에</button><button id="response-submit" class="primary" type="submit">재조정 의견 작성</button></div>
+  </form>
+</template>
+
+<template id="response-reject-dialog">
+  <form id="request-response-form">
+    <div class="field"><label for="response-comment">거절 사유</label><textarea id="response-comment" rows="4" maxlength="2000" placeholder="요청을 진행하기 어려운 이유를 작성해주세요." required></textarea></div>
+    <p id="response-error" class="form-error" role="alert"></p>
+    <div class="screen-actions"><button id="response-cancel" class="secondary" type="button">취소</button><button id="response-submit" class="primary" type="submit">거절 제출</button></div>
+  </form>
+</template>
+
+<template id="response-condition-option">
+  <label class="response-condition-row"><input type="checkbox" name="keep" value="{{value}}" /><span><span class="response-condition-title">{{label}} <b class="response-condition-badge {{constraintClass}}">{{constraint}}</b></span><small>{{detail}}</small></span></label>
+</template>
+
+<template id="direct-response">
+  <div class="section-title">수행자 응답 · {{decision}}</div>
+  <p class="hint">{{reason}}</p>
+</template>
+
+<template id="negotiation-response">
+  <div class="section-title">수행자 응답 · {{decision}}</div>
+  <p class="hint">유지 가능한 조건: {{conditions}}</p>
+  <p class="hint">{{comment}}</p>
+</template>
+
+<template id="generate-alternatives-button">
+  <button id="generate-alternatives" class="primary" onclick="act('generate')">대안 생성 ✧</button>
+</template>
+
+<template id="alternatives-section">
+  <div class="section-title">
+    대안 선택
+    <span class="count-dot">현재 {{role}} 계정 · 복수 선택 가능</span>
+  </div>
+  <p class="hint">가능한 대안을 모두 선택한 뒤 선택완료를 눌러주세요. 완료 후에는 선택을 변경할 수 없습니다. 변경이 필요하면 재조정 의견을 작성해주세요.</p>
+  <p class="hint">대안은 고정 시연안으로 표시하며, 재조정 시에는 재생성 대안 3개를 보여줍니다.</p>
+  <div class="proposal-grid">{{cards}}</div>
+  {{allUnavailable}}
+  <div class="selection-completion"><span>{{selectionStatus}}</span><button id="complete-selection" class="primary" {{completionDisabled}} onclick="completeSelection()">{{completionLabel}}</button></div>
+</template>
+
+<template id="alternative-card">
+  <article class="proposal {{commonClass}}">
+    <button type="button" class="proposal-select" aria-label="{{selectLabel}}" aria-pressed="{{pressed}}" {{disabled}} onclick="toggleAlternative({{alternativeId}})"></button>
+    <div class="proposal-body">
+      <div class="proposal-heading"><span class="letter">시연 대안</span><span class="proposal-selection">{{selection}}</span></div>
+      <h3>{{title}}</h3>
+      <p class="proposal-description">{{description}}</p>
+      <dl class="proposal-summary"><div><dt>마감</dt><dd>{{due}}</dd></div><div><dt>총수량</dt><dd>{{quantity}}</dd></div><div><dt>담당</dt><dd>{{people}}명</dd></div></dl>
+      <div class="proposal-schedule-title">작업 일정</div>
+      <div class="proposal-items" onclick="toggleAlternative({{alternativeId}})">{{items}}</div>
+      <div class="proposal-specification"><small>규격</small><span>{{specification}}</span></div>
+      {{consents}}
+      <div class="proposal-votes"><span>요청자 {{requesterName}} <b>{{requesterSelection}}</b></span><span>수행자 {{assigneeName}} <b>{{assigneeSelection}}</b></span></div>
+      <div class="proposal-actions">{{chooseButton}}</div>
+    </div>
+  </article>
+</template>
+
+<template id="alternative-item">
+  <div class="proposal-item"><div><b>{{assigneeName}}</b><span>{{quantity}}개</span></div><time>{{startAt}}<br>~ {{endAt}}</time></div>
+</template>
+
+<template id="alternative-consent">
+  <div class="approval">{{employeeName}} · {{status}}</div>
+</template>
+
+<template id="choose-alternative-button">
+  <button class="secondary" onclick="act('choose',{alternative_id:{{alternativeId}}})">
+    {{label}}
+  </button>
+</template>
+
+<template id="confirmation-section">
+  <div class="confirm-box">
+    <h3>양측 최종 확인</h3>
+    <p class="hint">최종 대안: {{alternativeTitle}}</p>
+    <p class="hint">
+      {{requesterName}}: {{requesterStatus}}
+      <br />
+      {{assigneeName}}: {{assigneeStatus}}
+    </p>
+    <button
+      class="secondary"
+      {{disabledAttribute}}
+      onclick="act('confirm',{alternative_id:{{alternativeId}}})"
+    >
+      내 최종 확인
+    </button>
+    <p class="hint">{{preferencesSummary}}</p>
+    {{settingsAction}}
+    {{consentStatus}}
+    <p class="hint">
+      관계자가 있으면 전원 동의 후 각자 내 일정 설정을 선택합니다. 모두 설정하면 협업이 자동 완료되고 일정에 반영됩니다. 이때 최신 일정의 충돌 여부를 다시 확인합니다.
+    </p>
+  </div>
+</template>
+
+<template id="finalize-agreement-button">
+  <button class="primary" onclick="act('finalize')">합의 확정 · 일정 등록</button>
+</template>
+
+<template id="agreement-success">
+  <div class="success-state" style="margin-top: 20px">
+    ✓ 양측 합의가 완료되어 작업 일정이 등록되었습니다.
+    <br />
+    확정: {{finalizedAt}}
+  </div>
+</template>
+
+<template id="renegotiate-button">
+  <button class="secondary" aria-describedby="renegotiate-hint" onclick="openRenegotiate()">재조정 의견</button>
+</template>
+
+<template id="round-history">
+  <div class="section-title">이전 조율 회차</div>
+  {{rounds}}
+</template>
+
+<template id="round-history-item">
+  <div class="conflict">
+    <span>
+      {{number}}차 · {{status}}
+      <br />
+      <small>{{feedback}}</small>
+    </span>
+    <small>{{closedAt}}</small>
+  </div>
+</template>
+
+<template id="consent-rejection-notice">
+  <section class="consent-rejection-notice" role="alert"><h3>관계자 동의 거부 · 재조정 필요</h3><ul>{{entries}}</ul><p>기존 대안은 완료되지 않으며 일정도 반영되지 않습니다. 거부 사유를 반영해 새 대안을 생성하고 양측이 다시 선택·확인해주세요.</p><button class="primary" onclick="restartAfterRejection()">재조정 시작 · 대안 생성</button></section>
+</template>
+
+<template id="schedule-preferences-dialog">
+  <form id="request-response-form">
+    <p class="hint">내 일정에 등록할 우선순위와 작업량을 직접 선택해주세요. 다른 참여자는 본인 일정의 값을 별도로 선택합니다.</p>
+    <fieldset class="schedule-preference-group"><legend>우선순위</legend><div class="schedule-radio-options">
+      <label><input type="radio" name="schedule-priority" value="LOW" required>낮음</label><label><input type="radio" name="schedule-priority" value="MEDIUM" required>보통</label><label><input type="radio" name="schedule-priority" value="HIGH" required>높음</label>
+    </div></fieldset>
+    <fieldset class="schedule-preference-group"><legend>작업량</legend><div class="schedule-radio-options">
+      <label><input type="radio" name="schedule-workload" value="LOW" required>적음</label><label><input type="radio" name="schedule-workload" value="MEDIUM" required>보통</label><label><input type="radio" name="schedule-workload" value="HIGH" required>많음</label>
+    </div></fieldset>
+    <p id="response-error" class="form-error" role="alert"></p>
+    <div class="screen-actions"><button id="response-cancel" class="secondary" type="button">취소</button><button id="response-submit" class="primary" type="submit">{{submitLabel}}</button></div>
+  </form>
+</template>

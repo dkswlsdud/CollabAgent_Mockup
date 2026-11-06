@@ -1,0 +1,20 @@
+<template id="requests-received-page">
+  <div class="content">
+    {{heading}}
+    <section class="stats">{{statistics}}</section>
+    <div class="layout">
+      <section class="panel">
+        <div class="panel-header">
+          <h2>
+            받은 요청
+            <span class="badge-inline">{{requestCount}}</span>
+          </h2>
+          <button class="text-button" onclick="refreshData()">새로고침 ↻</button>
+        </div>
+        <div class="tabs">{{tabs}}</div>
+        {{requestCards}}
+      </section>
+      {{sidebar}}
+    </div>
+  </div>
+</template>

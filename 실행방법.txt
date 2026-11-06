@@ -1,0 +1,7 @@
+docker compose up -d --build  컨테이너 생성 및 앱 실행(코드 바꾸고 실행할 때)
+http://localhost:8080 접속
+docker compose ps  실행상태 확인
+docker compose stop 앱 종료
+docker compose start 종료했던 앱 다시 시작
+
+폴더 구조, DB 초기화, 로컬 실행 및 검증 방법은 README.md 참고

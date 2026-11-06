@@ -1,0 +1,68 @@
+<template id="schedule-detail-page">
+  <div class="content screen-page">
+    <div class="page-heading">
+      <div>
+        <div class="eyebrow">COLLAB AGENT</div>
+        <h1>일정 상세</h1>
+        <p class="subtitle">담당자와 기간, 우선순위를 확인하세요.</p>
+      </div>
+      <button class="secondary" onclick="navigate('calendar')">목록으로</button>
+    </div>
+    <section class="panel screen-panel">
+      <div class="screen-body">
+        {{details}}
+      </div>
+      <div class="screen-actions"></div>
+    </section>
+  </div>
+</template>
+
+<template id="schedule-owner-actions">
+  <div class="screen-actions">
+    <button id="schedule-delete" class="secondary schedule-delete" type="button">일정 삭제</button>
+    <button id="schedule-edit" class="primary" type="button">일정 수정</button>
+  </div>
+  <p id="schedule-action-error" class="form-error" role="alert"></p>
+</template>
+
+<template id="schedule-edit-form">
+  <form id="schedule-editor">
+    <div class="field"><label for="edit-schedule-title">일정 이름</label><input id="edit-schedule-title" value="{{title}}" maxlength="255" required /></div>
+    <div class="two-col">
+      <div class="field"><label for="edit-schedule-type">유형</label><select id="edit-schedule-type"><option value="WORK">업무</option><option value="MEETING">회의</option><option value="PERSONAL">개인 일정</option></select></div>
+      <div class="field"><label for="edit-schedule-status">상태</label><select id="edit-schedule-status"><option value="SCHEDULED">예정</option><option value="IN_PROGRESS">진행 중</option><option value="COMPLETED">완료</option><option value="CANCELLED">취소</option></select></div>
+    </div>
+    <div class="two-col">
+      <div class="field"><label for="edit-schedule-start">시작</label><input id="edit-schedule-start" type="datetime-local" value="{{start}}" required /></div>
+      <div class="field"><label for="edit-schedule-end">종료</label><input id="edit-schedule-end" type="datetime-local" value="{{end}}" required /></div>
+    </div>
+    <div class="two-col">
+      <div class="field"><label for="edit-schedule-priority">우선순위</label><select id="edit-schedule-priority"><option value="HIGH">높음</option><option value="MEDIUM">보통</option><option value="LOW">낮음</option></select></div>
+      <div class="field"><label for="edit-schedule-workload">작업량</label><select id="edit-schedule-workload"><option value="HIGH">많음</option><option value="MEDIUM">보통</option><option value="LOW">적음</option></select></div>
+    </div>
+    <div class="field"><label for="edit-schedule-memo">메모</label><textarea id="edit-schedule-memo" rows="3" maxlength="2000">{{memo}}</textarea></div>
+    <p id="schedule-action-error" class="form-error" role="alert"></p>
+    <div class="screen-actions"><button id="schedule-edit-cancel" class="secondary" type="button">취소</button><button id="schedule-edit-save" class="primary" type="submit">변경 저장</button></div>
+  </form>
+</template>
+
+<template id="schedule-detail-content">
+        <span class="tag submitted">{{type}}</span>
+        <h2 style="margin-top: 18px">{{title}}</h2>
+        <dl class="detail-list">
+          <dt>담당자</dt>
+          <dd>{{employeeName}} · {{department}}</dd>
+          <dt>기간</dt>
+          <dd>{{startAt}} ~ {{endAt}}</dd>
+          <dt>우선순위</dt>
+          <dd>{{priority}}</dd>
+          <dt>작업량</dt>
+          <dd>{{workload}}</dd>
+          <dt>상태</dt>
+          <dd>{{status}}</dd>
+          <dt>요청자</dt>
+          <dd>{{requesterName}}</dd>
+          <dt>메모</dt>
+          <dd>{{memo}}</dd>
+        </dl>
+</template>

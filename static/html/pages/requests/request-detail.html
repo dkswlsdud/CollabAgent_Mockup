@@ -1,0 +1,17 @@
+<template id="request-detail-page">
+  <div class="content screen-page">
+    <div class="page-heading">
+      <div>
+        <div class="eyebrow">COLLAB AGENT</div>
+        <h1>협업 요청 상세</h1>
+        <p class="subtitle"></p>
+      </div>
+      <button class="secondary" onclick="navigate('inbox')">목록으로</button>
+    </div>
+    <section class="panel screen-panel">
+      <div class="screen-body">{{body}}</div>
+      <div class="screen-actions">{{footer}}</div>
+      {{footerHint}}
+    </section>
+  </div>
+</template>

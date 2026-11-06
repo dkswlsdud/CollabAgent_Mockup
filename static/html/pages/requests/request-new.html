@@ -1,0 +1,33 @@
+<template id="request-new-page">
+  <div class="content screen-page">
+    <div class="page-heading"><div><div class="eyebrow">COLLAB AGENT</div><h1>새 협업 요청</h1>
+      <p class="subtitle">요청을 작성하면 업무와 조건을 정리하고 빠진 정보만 확인합니다.</p></div>
+      <button class="secondary" onclick="navigate('inbox')">목록으로</button></div>
+    <section class="panel screen-panel"><div class="screen-body"><form id="request-form">
+      <div class="section-title">1. 요청 입력</div>
+      <div class="field"><label for="request-title">요청 제목 · 직접 작성</label><input id="request-title" required maxlength="1000" placeholder="예: 고객 인터뷰 질문지 검토" /></div>
+      <div class="two-col">
+        <div class="field"><label for="request-team">수신 팀</label><select id="request-team" required></select></div>
+        <div class="field"><label for="request-person">수신 팀원</label><select id="request-person" data-answer-key="assignee_id" required></select></div>
+      </div>
+      <div class="field"><label for="request-original">동료에게 요청할 내용을 자유롭게 작성하세요</label>
+        <textarea id="request-original" rows="4" required maxlength="5000" placeholder="다음 주 금요일까지 디자인팀 정하은 님에게 신제품 배너 5개를 1200×600px로 만들어 달라고 요청해줘."></textarea></div>
+      <div class="field"><label for="request-files">첨부파일</label><input id="request-files" type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.png,.jpg,.jpeg,.gif,.webp,.zip"><p class="hint">최대 5개 · 파일당 10MB · 전체 20MB. 문서, 이미지, ZIP 파일을 첨부할 수 있습니다.</p><ul id="request-file-list"></ul></div>
+      <button id="request-analyze" class="primary" type="button">요청 분석 · 추가 답변 반영</button>
+      <p id="intake-status" role="status" class="hint"></p>
+      <div id="request-review" hidden>
+        <div class="section-title">2. 누락 정보와 요청 조건 확인</div><div id="request-questions"></div>
+        
+        <div class="field"><label for="request-due">마감 일시</label><input id="request-due" data-answer-key="due_at" type="datetime-local" required /></div>
+        <div class="section-title">3. 필요한 조건 확인 · Hard / Soft 선택</div>
+        <p id="request-suggestions" class="analysis" role="status"></p>
+        <p class="hint">AI가 제안한 조건의 필요 이유를 확인하고 값을 입력해주세요. 조건을 직접 추가·수정·삭제할 수도 있습니다. Hard는 변경 불가, Soft는 조정 가능입니다.</p>
+        <div class="condition"><strong>마감</strong><span style="flex:1">위의 마감 일시</span><select id="hard-deadline"><option value="HARD">Hard · 변경 불가</option><option value="SOFT">Soft · 조정 가능</option></select></div>
+        <div id="request-conditions"></div>
+        <div class="condition"><input id="new-condition-label" placeholder="추가 조건 이름 (예: 검수 방식)" aria-label="추가 조건 이름" maxlength="100" /><button id="add-condition" type="button" class="secondary">조건 추가</button></div>
+      </div><p class="hint">자유롭게 작성하시면 제출 시 AI가 최종 조건에 맞춰 정중한 협업 신청서로 다듬어 전달합니다.</p>
+      <p class="form-error" id="request-error" role="alert"></p>
+    </form></div><div class="screen-actions"><button class="secondary" onclick="navigate('inbox')">취소</button>
+      <button id="request-submit" class="primary" type="submit" form="request-form" disabled>요청서 작성 / 제출</button></div></section>
+  </div>
+</template>

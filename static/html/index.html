@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Collab Agent · 협업 요청 조율</title>
+    <link rel="stylesheet" href="/static/css/styles.css" />
+  </head>
+  <body class="signed-out">
+    <div id="auth-root"><div class="calendar-loading">Collab Agent를 준비하고 있습니다…</div></div>
+    <aside class="sidebar" id="workspace-sidebar">
+      <a class="brand" id="home-brand" href="#" aria-label="Collab Agent 홈">Collab Agent</a>
+      <div class="nav-label">WORKSPACE</div>
+      <nav>
+        <button id="request-nav" class="nav active" data-page="inbox" aria-expanded="true" aria-controls="request-submenu">
+          <span>💡</span>
+          요청함 <small id="requests-new-badge" class="new-label" hidden>New</small>
+          <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+        </button>
+        <div class="nav-submenu" id="request-submenu">
+          <button data-request-box="received">받은 요청 <small id="received-new-badge" class="new-label" hidden>New</small></button>
+          <button data-request-box="sent">나의 요청 <small id="sent-new-badge" class="new-label" hidden>New</small></button>
+          <button data-request-box="consents">관계자 동의 요청 <small id="consents-new-badge" class="new-label" hidden>New</small></button>
+        </div>
+        <button
+          id="schedule-toggle"
+          class="nav"
+          data-page="calendar"
+          aria-expanded="true"
+          aria-controls="schedule-submenu"
+        >
+          <span>📆</span>
+          일정
+          <small id="schedule-new-badge" class="schedule-new-badge" hidden>New</small>
+          <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+        </button>
+        <div id="schedule-submenu" class="nav-submenu">
+          <button data-scope="team">팀 일정</button>
+          <button data-scope="my">내 일정</button>
+        </div>
+        <button id="history-nav" class="nav" data-page="history">
+          <span>📋</span>
+          합의 기록
+        </button>
+      </nav>
+      <div class="profile">
+        <div id="profile-initial" class="avatar purple"></div>
+        <div class="profile-details">
+          <strong id="profile-name"></strong>
+          <small id="profile-team"></small>
+          <small id="profile-login-id"></small>
+        </div>
+        <span id="profile-status" class="profile-status" role="img" aria-label="로그인됨" title="로그인됨" hidden></span>
+      </div>
+    </aside>
+    <main>
+      <header class="topbar">
+        <div class="topbar-location">
+          <button
+            id="sidebar-toggle"
+            class="icon-button sidebar-toggle"
+            type="button"
+            aria-label="사이드바 접기"
+            title="사이드바 접기"
+            aria-controls="workspace-sidebar"
+            aria-expanded="true"
+          >
+            ☰
+          </button>
+          <span>
+            워크스페이스
+            <i>/</i>
+            <strong id="breadcrumb">협업 요청함</strong>
+          </span>
+        </div>
+        <div>
+          <span class="demo-badge">DB CONNECTED</span>
+          <span id="top-date"></span>
+          <button
+            class="icon-button"
+            id="refresh"
+            title="최신 데이터 불러오기"
+            aria-label="최신 데이터 불러오기"
+          >
+            ↻
+          </button>
+          <button id="logout" class="text-button account-logout" type="button">로그아웃</button>
+        </div>
+      </header>
+      <div id="app"></div>
+    </main>
+    <dialog id="schedule-dialog" class="schedule-dialog" aria-labelledby="schedule-dialog-title">
+      <header class="schedule-dialog-header">
+        <h2 id="schedule-dialog-title">일정 상세</h2>
+        <button id="schedule-dialog-close" class="icon-button" type="button" aria-label="일정 상세 닫기" autofocus>✕</button>
+      </header>
+      <div id="schedule-dialog-body" class="schedule-dialog-body" aria-live="polite"></div>
+    </dialog>
+    <dialog id="response-dialog" class="schedule-dialog" aria-labelledby="response-dialog-title">
+      <header class="schedule-dialog-header">
+        <h2 id="response-dialog-title">요청 응답</h2>
+        <button id="response-dialog-close" class="icon-button" type="button" aria-label="요청 응답 닫기" autofocus>✕</button>
+      </header>
+      <div id="response-dialog-body" class="schedule-dialog-body"></div>
+    </dialog>
+    <dialog id="my-calendar-dialog" class="schedule-dialog my-calendar-dialog" aria-labelledby="my-calendar-title">
+      <header class="schedule-dialog-header"><h2 id="my-calendar-title">내 일정</h2><button id="my-calendar-close" class="icon-button" type="button" aria-label="내 일정 캘린더 닫기" autofocus>✕</button></header>
+      <div id="my-calendar-body" class="my-calendar-body"></div>
+    </dialog>
+    <div id="toast" role="status"></div>
+    <script type="module" src="/static/js/app.js"></script>
+  </body>
+</html>
